@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph, START, END
 
 from retrieval import retrieve_documents
 from mock_llm import classify_intent, mock_llm
+from schema import SupportResponse
 
 
 class SupportState(TypedDict):
@@ -37,20 +38,32 @@ def retrieve_and_answer_node(state: SupportState):
         documents
     )
 
+    response = SupportResponse(
+        answer=answer,
+        sources=sources,
+        confidence=1.0
+    )
+
     return {
         "retrieved_documents": documents,
-        "sources": sources,
-        "answer": answer,
-        "confidence": 1.0
+        "sources": response.sources,
+        "answer": response.answer,
+        "confidence": response.confidence
     }
 
 
 def direct_answer_node(state: SupportState):
+    response = SupportResponse(
+        answer="I can only answer questions about Zepto policies right now.",
+        sources=[],
+        confidence=1.0
+    )
+
     return {
         "retrieved_documents": [],
-        "sources": [],
-        "answer": "I can only answer questions about Zepto policies right now.",
-        "confidence": 1.0
+        "sources": response.sources,
+        "answer": response.answer,
+        "confidence": response.confidence
     }
 
 
